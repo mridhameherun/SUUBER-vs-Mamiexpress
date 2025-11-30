@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost calculator SUUBER vs Mamiexpress</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #ffffff;
+            --color-text-main: #1e293b;
+            --color-text-muted: #3232326c;
+            --color-primary: #009ED9;
+            --color-card-bg: #E0F7FA;
+            --color-mamiexpress: #8DE0FF;
+            --color-suuber: #8DE0FF;
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --font-family: 'DM Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+        }
+
+        /* --- Main Container --- */
+        .app-container {
+            background-color: var(--color-card-bg);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                flex-direction: row;
+                margin: 3rem;
+            }
+        }
+
+        /* --- Layout Panels --- */
+        .panel-left {
+            padding: 20px;
+            position: relative;
+        }
+
+        .panel-right {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .panel-left {
+                width: 60%;
+                padding: 20px;
+            }
+
+            .panel-right {
+                width: 40%;
+                padding: 20px;
+            }
+        }
+
+        /* --- Typography --- */
+        h1 {
+            font-size: 80px;
+            font-weight: 500;
+            margin: 0 0 0.5rem 0;
+            color: var(--color-text-main);
+        }
+
+        h2 {
+            font-size: 40px;
+            font-weight: 600;
+            margin: 0 0 2rem 0;
+            color: var(--color-text-main);
+        }
+
+        h3 {
+            font-size: 30px;
+            font-weight: 600;
+            margin: 0 0 1.25rem 0;
+            color: var(--color-text-main);
+        }
+
+        h4 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            color: var(--color-text-main);
+        }
+
+        p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-xs {
+            font-size: 0.75rem;
+        }
+
+        .text-muted {
+            color: var(--color-text-muted);
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Sliders --- */
+        .slider-group {
+            position: relative;
+            padding-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .slider-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            height: 4px;
+            background-color: var(--color-primary);
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .slider-bubble {
+            position: absolute;
+            top: -24px;
+            background-color: var(--color-primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            transform: translateX(-50%);
+            pointer-events: none;
+            transition: left 0.1s ease;
+        }
+
+        /* Native Slider Styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Slider Thumb */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #009ce0;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #009ce0;
+            cursor: pointer;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* --- Radio Groups --- */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .radio-label:hover span {
+            color: var(--color-text-main);
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .custom-radio {
+            display: none;
+            /* Hide default radio */
+        }
+
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s;
+        }
+
+        .radio-label:hover .radio-circle {
+            border-color: var(--color-primary);
+        }
+
+        .radio-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            transform: scale(0);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-radio:checked+.radio-circle {
+            border-color: var(--color-primary);
+        }
+
+        .custom-radio:checked+.radio-circle .radio-dot {
+            transform: scale(1);
+        }
+
+        .radio-text {
+            color: #475569;
+            transition: color 0.2s;
+        }
+
+        /* --- Result Cards --- */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .result-card {
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: var(--color-text-main);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-mamiexpress {
+            background-color: var(--color-mamiexpress);
+        }
+
+        .card-suuber {
+            background-color: var(--color-suuber);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .card-suuber .card-title {
+            text-transform: uppercase;
+        }
+
+        .card-price {
+            font-size: 1.875rem;
+            /* 3xl */
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .price-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+        }
+
+        /* --- Breakdown Styles --- */
+        .breakdown-details {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        details summary {
+            list-style: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            color: #0f172a;
+        }
+
+        details summary:hover {
+            opacity: 1;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .breakdown-content {
+            font-family: 'Inter', monospace;
+            font-size: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.4);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .breakdown-subrow {
+            display: flex;
+            justify-content: space-between;
+            padding-left: 0.5rem;
+            opacity: 0.8;
+            font-size: 0.7rem;
+        }
+
+        .breakdown-divider {
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin: 0.25rem 0;
+        }
+
+        /* --- Footer Stats --- */
+        .stats-footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Left Panel: Controls -->
+        <div class="panel-left">
+            <h4>Cost calculator SUUBER vs Mamiexpress</h4>
+
+            <!-- 1. Net Salary Slider -->
+            <div class="slider-group">
+                <div class="slider-header">
+                    <div class="slider-label">Net salary</div>
+                </div>
+                <div class="slider-wrapper">
+                    <div id="track-bg-salary" class="slider-fill" style="width: 30%"></div>
+                    <div id="bubble-salary" class="slider-bubble" style="left: 30%">30</div>
+                    <input type="range" id="salary-input" min="0" max="100" step="1" value="30">
+                </div>
+                <div class="slider-labels"><span>0</span><span>100</span></div>
+                <p class="text-muted" style="margin-top: 0.5rem;">
+                    Mamiexpress does not offer freely selectable net wages, but rather fixed net wages of CHF 37.49.
+                </p>
+            </div>
+
+            <!-- 2. Hours Slider -->
+            <div class="slider-group">
+                <div class="slider-header">
+                    <div class="slider-label">Number of hours per appointment</div>
+                </div>
+                <div class="slider-wrapper">
+                    <div id="track-bg-hours" class="slider-fill" style="width: 16.66%"></div>
+                    <div id="bubble-hours" class="slider-bubble" style="left: 16.66%">3</div>
+                    <input type="range" id="hours-input" min="2" max="8" step="0.5" value="3">
+                </div>
+                <div class="slider-labels"><span>2 Hours</span><span>8 Hours</span></div>
+            </div>
+
+            <!-- 3. Frequency -->
+            <div>
+                <h3>How often should it be cleaned?</h3>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="frequency" value="monthly" class="custom-radio">
+                        <div class="radio-circle">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <span class="radio-text">once a month</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="frequency" value="twice_monthly" class="custom-radio">
+                        <div class="radio-circle">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <span class="radio-text">twice a month</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="frequency" value="weekly" class="custom-radio" checked>
+                        <div class="radio-circle">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <span class="radio-text">once a week</span>
+                    </label>
+                </div>
+                <p class="text-muted" style="margin-top: 1rem;">Number of appointments per month: <span
+                        id="appointments-display">4.33</span></p>
+            </div>
+        </div>
+
+        <!-- Right Panel: Results -->
+        <div class="panel-right">
+            <h2>Total costs per hour</h2>
+
+            <div class="results-container">
+
+                <!-- Mamiexpress Card -->
+                <div class="result-card card-mamiexpress">
+                    <div class="card-title">Mamiexpress</div>
+                    <div class="card-subtitle">Estimated Monthly Cost</div>
+                    <div class="card-price" id="mamiexpress-monthly">CHF 00.00</div>
+
+                    <!-- Mamiexpress Breakdown Removed -->
+                </div>
+
+                <!-- SUUBER Card -->
+                <div class="result-card card-suuber">
+                    <div class="card-title">SUUBER</div>
+                    <div class="card-subtitle">Estimated Monthly Cost</div>
+                    <div class="card-price" id="suuber-monthly">CHF 00.00</div>
+
+                    <div class="breakdown-details">
+                        <details>
+                            <summary><i data-lucide="info" style="width:14px; margin-right:6px;"></i> CALCULATION
+                                BREAKDOWN</summary>
+                            <div class="breakdown-content" id="suuber-breakdown-content">
+                                <!-- Populated by JS -->
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Stats -->
+            <div class="stats-footer">
+                <div class="stat-row">
+                    <span class="stat-label">Mamiexpress Total Cost per hour</span>
+                    <span class="stat-value" id="mamiexpress-hourly-rate">CHF 35.00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">SUUBER Total Cost per hour</span>
+                    <span class="stat-value" id="suuber-hourly-rate">CHF 00.00</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        // SUUBER Constants
+        const S_P_AHV = 10.55;
+        const S_P_ALV = 2.20;
+        const S_P_FAK = 2.30;
+        const S_ADMIN_PCT = 5.0; // of AHV
+        const S_FIXED_PER_HOUR = 0.60 + 0.75 + 0.75 + 1.40;
+
+        // MAMIGEXPRESS Constants (Fixed based on user update)
+        const M_NET_BASE = 37.49; // Fixed Net wage
+        const M_P_AHV = 10.55;
+        const M_P_ALV = 2.20;
+        const M_P_FAK = 2.30;
+        const M_ADMIN_PCT = 5.0; // of AHV
+        // Fixed fees: Acc 0.60 + KTG 0.75 + Liab 0.75 + Serv 1.40 = 3.50
+        const M_FIXED_PER_HOUR = 0.60 + 0.75 + 0.75 + 1.40;
+
+        // Annual Visits Mapping
+        const VISITS_PER_YEAR = {
+            'monthly': 12,
+            'twice_monthly': 26,
+            'weekly': 52
+        };
+
+        const APPOINTMENTS_DISPLAY = {
+            'monthly': '1',
+            'twice_monthly': '2',
+            'weekly': '4.33'
+        };
+
+        // --- Elements ---
+        const salaryInput = document.getElementById('salary-input');
+        const hoursInput = document.getElementById('hours-input');
+
+        const bubbleSalary = document.getElementById('bubble-salary');
+        const trackSalary = document.getElementById('track-bg-salary');
+
+        const bubbleHours = document.getElementById('bubble-hours');
+        const trackHours = document.getElementById('track-bg-hours');
+
+        const mamiexpressMonthlyEl = document.getElementById('mamiexpress-monthly');
+        const suuberMonthlyEl = document.getElementById('suuber-monthly');
+
+        const mamiexpressRateEl = document.getElementById('mamiexpress-hourly-rate');
+        const suuberRateEl = document.getElementById('suuber-hourly-rate');
+
+        const suuberBreakdownContent = document.getElementById('suuber-breakdown-content');
+        // Removed mamiexpressBreakdownContent element selector
+        const appointmentsDisplay = document.getElementById('appointments-display');
+
+        // --- Logic ---
+
+        function calculatePrices() {
+            // Inputs
+            const netSalary = parseFloat(salaryInput.value);
+            const hoursPerVisit = parseFloat(hoursInput.value);
+            const frequencyKey = document.querySelector('input[name="frequency"]:checked').value;
+
+            // Updates text
+            appointmentsDisplay.textContent = APPOINTMENTS_DISPLAY[frequencyKey];
+
+            // 1. Calculate Total Monthly Hours (Average)
+            const annualVisits = VISITS_PER_YEAR[frequencyKey];
+            const avgMonthlyHours = (annualVisits * hoursPerVisit) / 12;
+
+            // Guard
+            if (avgMonthlyHours <= 0) return;
+
+            // --- SUUBER CALCULATION ---
+            const s_AhvVal = netSalary * (S_P_AHV / 100);
+            const s_AlvVal = netSalary * (S_P_ALV / 100);
+            const s_FakVal = netSalary * (S_P_FAK / 100);
+            const s_AdminVal = s_AhvVal * (S_ADMIN_PCT / 100);
+
+            const suuberHourly = netSalary + s_AhvVal + s_AlvVal + s_FakVal + s_AdminVal + S_FIXED_PER_HOUR;
+            const suuberMonthly = suuberHourly * avgMonthlyHours;
+
+            // --- MAMIEXPRESS CALCULATION (Fixed Base) ---
+            const m_AhvVal = M_NET_BASE * (M_P_AHV / 100);
+            const m_AlvVal = M_NET_BASE * (M_P_ALV / 100);
+            const m_FakVal = M_NET_BASE * (M_P_FAK / 100);
+            const m_AdminVal = m_AhvVal * (M_ADMIN_PCT / 100);
+
+            const mamiHourly = M_NET_BASE + m_AhvVal + m_AlvVal + m_FakVal + m_AdminVal + M_FIXED_PER_HOUR;
+            const mamiMonthly = mamiHourly * avgMonthlyHours;
+
+            // --- Update UI ---
+            const fmt = (val) => new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF' }).format(val);
+
+            suuberMonthlyEl.textContent = fmt(suuberMonthly);
+            suuberRateEl.textContent = fmt(suuberHourly);
+
+            mamiexpressMonthlyEl.textContent = fmt(mamiMonthly);
+            mamiexpressRateEl.textContent = fmt(mamiHourly);
+
+            // --- Update Breakdowns ---
+            // Removed mamiexpress breakdown update logic
+
+            // SUUBER
+            suuberBreakdownContent.innerHTML = `
+                <div class="breakdown-row"><span>Base Net Salary</span> <span>CHF ${netSalary.toFixed(2)}</span></div>
+                <div class="breakdown-subrow"><span>+ AHV/IV/EO (${S_P_AHV}%)</span> <span>${s_AhvVal.toFixed(2)}</span></div>
+                <div class="breakdown-subrow"><span>+ ALV (${S_P_ALV.toFixed(2)}%)</span> <span>${s_AlvVal.toFixed(2)}</span></div>
+                <div class="breakdown-subrow"><span>+ FAK (~${S_P_FAK}%)</span> <span>${s_FakVal.toFixed(2)}</span></div>
+                <div class="breakdown-subrow"><span>+ Admin (5% of AHV)</span> <span>${s_AdminVal.toFixed(2)}</span></div>
+                <div class="breakdown-divider"></div>
+                <div class="breakdown-subrow"><span>+ Accident Ins.</span> <span>0.60</span></div>
+                <div class="breakdown-subrow"><span>+ KTG</span> <span>0.75</span></div>
+                <div class="breakdown-subrow"><span>+ Liability</span> <span>0.75</span></div>
+                <div class="breakdown-subrow"><span>+ Service Fee</span> <span>1.40</span></div>
+                <div class="breakdown-divider"></div>
+                <div class="breakdown-row" style="color:#0f172a"><span>Total Hourly</span> <span>${fmt(suuberHourly)}</span></div>
+            `;
+        }
+
+        // --- Slider Visuals ---
+        function updateSlider(input, bubble, track) {
+            const min = parseFloat(input.min);
+            const max = parseFloat(input.max);
+            const val = parseFloat(input.value);
+            const percentage = ((val - min) / (max - min)) * 100;
+
+            track.style.width = `${percentage}%`;
+            bubble.style.left = `${percentage}%`;
+            bubble.textContent = val;
+        }
+
+        // Listeners
+        salaryInput.addEventListener('input', () => { updateSlider(salaryInput, bubbleSalary, trackSalary); calculatePrices(); });
+        hoursInput.addEventListener('input', () => { updateSlider(hoursInput, bubbleHours, trackHours); calculatePrices(); });
+
+        document.querySelectorAll('input[name="frequency"]').forEach(r => {
+            r.addEventListener('change', () => { calculatePrices(); });
+        });
+
+        // Init
+        updateSlider(salaryInput, bubbleSalary, trackSalary);
+        updateSlider(hoursInput, bubbleHours, trackHours);
+
+        // Initial Icons
+        lucide.createIcons();
+        calculatePrices();
+
+    </script>
+</body>
+
+</html>
